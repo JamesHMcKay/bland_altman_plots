@@ -9,7 +9,7 @@ instrument_1 <- function(real_value) {
   return(measured_value)
 }
 
-instrument_2 <- function(real_value) {
+instrument_2 <- function(real_value) {s
   measured_value = real_value + rnorm(1, 0, 1)
   return(measured_value)
 }
@@ -19,7 +19,7 @@ linear_fit <- function(data) {
   fit <- lm(difference ~ real_data, data)
 
   modelled_difference <- fit$coefficients[[1]] +
-    fit$coefficients[[2]] * real_data
+    fit$coefficients[[2]] * data$real_data
 
   return(modelled_difference)
 }
@@ -32,8 +32,8 @@ quadratic_fit <- function(data) {
   quadratic_fit <- lm(difference ~ real_data + real_data_squared, data)
 
   modelled_difference <- quadratic_fit$coefficients[[1]] +
-    quadratic_fit$coefficients[[2]] * real_data +
-    quadratic_fit$coefficients[[3]] * real_data * real_data
+    quadratic_fit$coefficients[[2]] * data$real_data +
+    quadratic_fit$coefficients[[3]] * data$real_data * data$real_data
   return(modelled_difference)
 }
 
@@ -51,23 +51,56 @@ plot_simple_ci <- function(data) {
   abline(crude_upper_limit, 0, lty = 2)
 }
 
-plot_ci <- function(modeled_differences, data) {
+plot_ci <- function(modeled_differences, data, label_1 = "label1", label_2 = "label2", range = c(0, 5)) {
   # save variable for convenience (instead of writing data$real_data everytime)
   real_data <- data$real_data
 
-  data$residuals <- abs(modeled_differences - difference)
+  data$residuals <- abs(modeled_differences - data$difference)
 
   # fit a linear model to the residuals
   fit_to_residuals <- lm(residuals ~ real_data, data)
 
-  lower_limit <- modeled_differences +  sqrt(0.5 * pi) * (fit_to_residuals$coefficients[[1]] + fit_to_residuals$coefficients[[2]] * real_data)
-  upper_limit <- modeled_differences -  sqrt(0.5 * pi) * (fit_to_residuals$coefficients[[1]] + fit_to_residuals$coefficients[[2]] * real_data)
+  lower_limit <- modeled_differences +  sqrt(0.5 * pi) * (
+    fit_to_residuals$coefficients[[1]] + fit_to_residuals$coefficients[[2]] * real_data
+  )
+  upper_limit <- modeled_differences -  sqrt(0.5 * pi) * (
+    fit_to_residuals$coefficients[[1]] + fit_to_residuals$coefficients[[2]] * real_data
+  )
+
+  loa_error <- sqrt(2.92) * sd(real_data) / sqrt(length(modeled_differences))
+  mean_difference_error = sd(real_data) / sqrt(length(modeled_differences))
+
+  lines_data <- data.frame(
+    lower_limit = lower_limit[order(real_data)],
+    upper_limit = upper_limit[order(real_data)],
+    modeled_differences = modeled_differences[order(real_data)],
+    x = real_data[order(real_data)],
+    stringsAsFactors = FALSE
+  )
 
   # plot the results
-  plot(real_data, difference)
-  lines(real_data[order(real_data)], modeled_differences[order(real_data)], type = "l")
-  lines(real_data[order(real_data)], lower_limit[order(real_data)], type = "l", lty = 2)
-  lines(real_data[order(real_data)], upper_limit[order(real_data)], type = "l", lty = 2)
+  # plot(real_data, difference)
+  # lines(real_data[order(real_data)], modeled_differences[order(real_data)], type = "l")
+  # lines(real_data[order(real_data)], lower_limit[order(real_data)], type = "l", lty = 2)
+  # lines(real_data[order(real_data)], upper_limit[order(real_data)], type = "l", lty = 2)
+  ggplot(data, aes(real_data, difference)) +
+    geom_point() +
+    scale_y_continuous(breaks=seq(-3, 3), limits = c(-3,3)) +
+    xlim(range[[1]], range[[2]]) +
+    geom_path(aes(x = x, y = upper_limit), data = lines_data, linetype = 2) +
+    geom_path(aes(x = x, y = upper_limit + loa_error), data = lines_data, linetype = 3) +
+    geom_path(aes(x = x, y = upper_limit - loa_error), data = lines_data, linetype = 3) +
+    geom_path(aes(x = x, y = lower_limit), data = lines_data, linetype = 2) +
+    geom_path(aes(x = x, y = lower_limit + loa_error), data = lines_data, linetype = 3) +
+    geom_path(aes(x = x, y = lower_limit - loa_error), data = lines_data, linetype = 3) +
+    geom_path(aes(x = x, y = modeled_differences), data = lines_data) +
+    geom_path(aes(x = x, y = modeled_differences + mean_difference_error), data = lines_data, linetype = 3) +
+    geom_path(aes(x = x, y = modeled_differences - mean_difference_error), data = lines_data, linetype = 3) +
+    xlab(label_1) +
+    ylab(label_2) +
+    theme(plot.caption = element_text(hjust = 0)) +
+    theme_bw() +
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 }
 
 plot_differences <- function(measured_value_1, measured_value_2) {
