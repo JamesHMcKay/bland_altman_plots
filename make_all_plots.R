@@ -3,7 +3,6 @@ library(blandr)
 library(ggplot2)
 library(gridExtra)
 library(ggpubr)
-library(readr)
 source("functions.R")
 source("bland-altman_no_proportional_bias.R")
 source("bland-altman_with_proportional_bias.R")
@@ -11,7 +10,7 @@ source("bland-altman_with_proportional_bias.R")
 vtas_range <- c(0, 5)
 vpps_range <- c(1, 5)
 
-reliabilitydata <- read_csv(
+reliabilitydata <- read.csv(
   "Brogan Barr_BEP and CCT _reliabilities_Feb2021.csv"
 )
 
