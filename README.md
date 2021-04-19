@@ -17,9 +17,11 @@ ggpubr 0.4.0
 
 The code used to produce the plots in the accompanying paper is:
 ```
-make_all_plots.R
+make_plots_for_paper.R
 ```
-Which uses a private csv file containing the data. To reuse this code for a different analysis, make the relevant adjustments to this script to use your own data.
+This script uses a private csv file containing the data. To reuse this code for a different analysis, make the relevant adjustments to this script to use your own data.
+
+The main functions used by this script are stored in the `R` folder.
 
 ## Example
 
