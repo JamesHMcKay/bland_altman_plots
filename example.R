@@ -1,10 +1,10 @@
 # This script demonstrates Bland-Altman plots using a simple synthetic data with random noise
-# See functions.R for more details on the synthetic instruments and how the bias is produced
+# See R/functions.R for more details on the synthetic instruments and how the bias is produced
 # Work through each line to see the plots
 
 library(dplyr)
 library(ggplot2)
-source("functions.R")
+source("R/functions.R")
 
 number_of_observations <- 300
 
