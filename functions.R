@@ -1,3 +1,6 @@
+# This file contains functions used for generating example data and producing the plots
+
+# Example instruments
 # Both instruments apply some random variation to the real value,
 # with a mean of zero and variance of 0.1, using the rnorm function.
 # Instrument 1 adds some additional random values with a bias, by adding a random
@@ -9,7 +12,7 @@ instrument_1 <- function(real_value) {
   return(measured_value)
 }
 
-instrument_2 <- function(real_value) {s
+instrument_2 <- function(real_value) {
   measured_value = real_value + rnorm(1, 0, 1)
   return(measured_value)
 }
@@ -52,7 +55,6 @@ plot_simple_ci <- function(data) {
 }
 
 plot_ci <- function(modeled_differences, data, label_1 = "label1", label_2 = "label2", range = c(0, 5)) {
-  # save variable for convenience (instead of writing data$real_data everytime)
   real_data <- data$real_data
 
   data$residuals <- abs(modeled_differences - data$difference)
@@ -79,10 +81,6 @@ plot_ci <- function(modeled_differences, data, label_1 = "label1", label_2 = "la
   )
 
   # plot the results
-  # plot(real_data, difference)
-  # lines(real_data[order(real_data)], modeled_differences[order(real_data)], type = "l")
-  # lines(real_data[order(real_data)], lower_limit[order(real_data)], type = "l", lty = 2)
-  # lines(real_data[order(real_data)], upper_limit[order(real_data)], type = "l", lty = 2)
   ggplot(data, aes(real_data, difference)) +
     geom_point() +
     scale_y_continuous(breaks=seq(-3, 3), limits = c(-3,3)) +
@@ -104,11 +102,11 @@ plot_ci <- function(modeled_differences, data, label_1 = "label1", label_2 = "la
 }
 
 plot_differences <- function(measured_value_1, measured_value_2) {
-  plot(measured_value_2, measured_value_1)
+  plot(measured_value_2, measured_value_1, xlab = "Real value", ylab = "Difference between instruments")
   abline(0, 1)
 }
 
 plot_differences_wrt_data <- function(real_data, difference) {
-  plot(real_data, difference)
+  plot(real_data, difference, xlab = "Real value", ylab = "Difference between instruments")
   abline(0, 0)
 }

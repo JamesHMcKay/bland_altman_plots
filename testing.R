@@ -45,4 +45,9 @@ data <- data %>%
 
 
 
+alldata <- read_csv(
+  "Rfulldatasetofratings.csv"
+)
+
+
 

@@ -1,13 +1,3 @@
-#install.packages("blandr")
-# install.packages("devtools")
-#devtools::install_github("deepankardatta/blandr")
-
-library(readr)
-library(blandr)
-library(ggplot2)
-library(gridExtra)
-library(ggpubr)
-
 plot_reliability_no_bias <- function(measured_value_1, measured_value_2, label_1, label_2, range, filename = NULL) {
   values <- blandr.statistics(
     measured_value_1,
@@ -62,5 +52,3 @@ plot_reliability_no_bias <- function(measured_value_1, measured_value_2, label_1
 
   return(result)
 }
-
-
